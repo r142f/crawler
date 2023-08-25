@@ -7,6 +7,7 @@ import (
 	"net/url"
 	"os"
 	"path/filepath"
+	"strings"
 )
 
 var parallelismDegree = flag.Uint("par", 1, "> 0, sets the degree of parallelism. Essentially, it regulates the max number of concurrent requests")
@@ -34,6 +35,11 @@ func main() {
 
 	links := make([]string, 0, len(flag.Args()))
 	for _, link := range flag.Args() {
+		if !strings.HasPrefix(link, "https://") && !strings.HasPrefix(link, "http://") {
+			log.Printf("adding \"https://\" scheme to %v\n", link)
+			link = "https://" + link
+		}
+
 		u, err := url.Parse(link)
 		if err != nil {
 			log.Printf("error while parsing url %v: %v\n", link, err)
